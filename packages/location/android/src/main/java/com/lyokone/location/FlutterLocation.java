@@ -168,11 +168,14 @@ public class FlutterLocation
         switch (requestCode) {
             case GPS_ENABLE_REQUEST:
                 if (this.requestServiceResult == null) {
+                    System.out.println("FlutterLocation.onActivityResult: GPS_ENABLE_REQUEST but requestServiceResult is null!");
                     return false;
                 }
                 if (resultCode == Activity.RESULT_OK) {
+                    System.out.println("FlutterLocation.onActivityResult: GPS_ENABLE_REQUEST returning 1");
                     this.requestServiceResult.success(1);
                 } else {
+                    System.out.println("FlutterLocation.onActivityResult: GPS_ENABLE_REQUEST returning 0");
                     this.requestServiceResult.success(0);
                 }
                 this.requestServiceResult = null;
@@ -497,7 +500,6 @@ public class FlutterLocation
                         // observed on some phones.
                         requestServiceResult.error("SERVICE_STATUS_ERROR", "Unexpected error type received", null);
                     }
-                    this.requestServiceResult = null;
                 });
     }
 

@@ -398,11 +398,11 @@ public class FlutterLocation
                 })
                 .addOnSuccessListener(activity, response -> {
                     System.out.println("FlutterLocation.onSuccessListener");
-                    requestServiceResult.success(1);
+//                    requestServiceResult.success(1);
                 })
                 .addOnCanceledListener(activity, () -> {
                     System.out.println("FlutterLocation.onCanceledListener");
-                    requestServiceResult.success(0);
+//                    requestServiceResult.success(0);
                 })
                 .addOnFailureListener(activity,
                 e -> {

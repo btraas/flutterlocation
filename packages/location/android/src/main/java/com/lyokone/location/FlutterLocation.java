@@ -385,7 +385,14 @@ public class FlutterLocation
         }
 
         this.requestServiceResult = requestServiceResult;
-        mSettingsClient.checkLocationSettings(mLocationSettingsRequest).addOnFailureListener(activity,
+        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(activity, e -> {
+                    requestServiceResult.success(1);
+                })
+                .addOnCanceledListener(activity, e -> {
+                    requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled");
+                })
+                .addOnFailureListener(activity,
                 e -> {
                     if (e instanceof ResolvableApiException) {
                         ResolvableApiException rae = (ResolvableApiException) e;

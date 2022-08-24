@@ -399,6 +399,7 @@ public class FlutterLocation
             this.requestServiceResult.success(0); // cancel previous result
         }
         System.out.println("FlutterLocation.requestService(): saving new requestServiceResult");
+
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnFailureListener(activity,

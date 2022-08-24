@@ -2,6 +2,8 @@ package com.lyokone.location;
 
 import android.graphics.Color;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
@@ -52,7 +54,12 @@ final class MethodCallHandlerImpl implements MethodCallHandler {
                 onServiceEnabled(result);
                 break;
             case "requestService":
-                location.requestService(result);
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        location.requestService(result);
+                    }
+                });
                 break;
             case "isBackgroundModeEnabled":
                 isBackgroundModeEnabled(result);

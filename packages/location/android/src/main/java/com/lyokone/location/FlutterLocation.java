@@ -392,8 +392,19 @@ public class FlutterLocation
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnCompleteListener(activity, task -> {
+
+                    boolean successful = task.isSuccessful();
+                    boolean complete = task.isComplete();
+                    boolean canceled = task.isCanceled();
                     boolean enabled = checkServiceEnabled();
-                    System.out.println("FlutterLocation.onCompleteListener: " + (enabled ? "enabled" : "disabled"));
+
+                    String e = (enabled ? "enabled" : "disabled");
+                    String s = (successful ? "successful" : "unsuccessful");
+                    String com = (complete ? "complete" : "incomplete");
+                    String can = (canceled ? "canceled" : "not canceled");
+
+
+                    System.out.println("FlutterLocation.onCompleteListener: " + e + ", " + s + ", " + com + ", " + can);
                     requestServiceResult.success(enabled ? 1 : 0);
                     this.requestServiceResult = null;
                 })

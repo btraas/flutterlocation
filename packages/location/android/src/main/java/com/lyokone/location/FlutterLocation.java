@@ -392,7 +392,9 @@ public class FlutterLocation
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnCompleteListener(activity, task -> {
-                    System.out.println("FlutterLocation.onCompleteListener");
+                    boolean enabled = checkServiceEnabled();
+                    System.out.println("FlutterLocation.onCompleteListener: " + (enabled ? "enabled" : "disabled"));
+                    requestServiceResult.success(enabled ? 1 : 0);
                 })
                 .addOnSuccessListener(activity, response -> {
                     System.out.println("FlutterLocation.onSuccessListener");
@@ -400,7 +402,7 @@ public class FlutterLocation
                 })
                 .addOnCanceledListener(activity, () -> {
                     System.out.println("FlutterLocation.onCanceledListener");
-                    requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled", null);
+                    requestServiceResult.success(0);
                 })
                 .addOnFailureListener(activity,
                 e -> {

@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCanceledListener;
 
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -386,10 +387,10 @@ public class FlutterLocation
 
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnSuccessListener(activity, e -> {
+                .addOnSuccessListener(activity, response -> {
                     requestServiceResult.success(1);
                 })
-                .addOnCanceledListener(activity, e -> {
+                .addOnCanceledListener(activity, () -> {
                     requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled");
                 })
                 .addOnFailureListener(activity,

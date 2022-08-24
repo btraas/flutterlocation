@@ -17,6 +17,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.util.SparseArray;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 
@@ -28,9 +29,12 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -387,14 +391,20 @@ public class FlutterLocation
 
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnCompleteListener(activity, task -> {
+                    System.out.println("FlutterLocation.onCompleteListener");
+                })
                 .addOnSuccessListener(activity, response -> {
+                    System.out.println("FlutterLocation.onSuccessListener");
                     requestServiceResult.success(1);
                 })
                 .addOnCanceledListener(activity, () -> {
+                    System.out.println("FlutterLocation.onCanceledListener");
                     requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled", null);
                 })
                 .addOnFailureListener(activity,
                 e -> {
+                    System.out.println("onFailureListener");
                     if (e instanceof ResolvableApiException) {
                         ResolvableApiException rae = (ResolvableApiException) e;
                         int statusCode = rae.getStatusCode();

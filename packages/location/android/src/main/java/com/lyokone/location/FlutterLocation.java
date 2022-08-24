@@ -395,8 +395,10 @@ public class FlutterLocation
         }
 
         if(this.requestServiceResult != null) {
+            System.out.println("FlutterLocation.requestService(): canceling old requestServiceResult");
             this.requestServiceResult.success(0); // cancel previous result
         }
+        System.out.println("FlutterLocation.requestService(): saving new requestServiceResult");
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnFailureListener(activity,

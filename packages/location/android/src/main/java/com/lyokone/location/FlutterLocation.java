@@ -391,7 +391,7 @@ public class FlutterLocation
                     requestServiceResult.success(1);
                 })
                 .addOnCanceledListener(activity, () -> {
-                    requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled");
+                    requestServiceResult.error("SERVICE_STATUS_ERROR", "Canceled", null);
                 })
                 .addOnFailureListener(activity,
                 e -> {

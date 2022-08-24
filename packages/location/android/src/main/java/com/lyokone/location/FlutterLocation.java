@@ -395,14 +395,17 @@ public class FlutterLocation
                     boolean enabled = checkServiceEnabled();
                     System.out.println("FlutterLocation.onCompleteListener: " + (enabled ? "enabled" : "disabled"));
                     requestServiceResult.success(enabled ? 1 : 0);
+                    this.requestServiceResult = null;
                 })
                 .addOnSuccessListener(activity, response -> {
                     System.out.println("FlutterLocation.onSuccessListener");
-//                    requestServiceResult.success(1);
+                    requestServiceResult.success(1);
+                    this.requestServiceResult = null;
                 })
                 .addOnCanceledListener(activity, () -> {
                     System.out.println("FlutterLocation.onCanceledListener");
-//                    requestServiceResult.success(0);
+                    requestServiceResult.success(0);
+                    this.requestServiceResult = null;
                 })
                 .addOnFailureListener(activity,
                 e -> {

@@ -164,6 +164,7 @@ public class FlutterLocation
 
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
+        System.out.println("FlutterLocation.onActivityResult: request=" + requestCode + ", result="+resultCode);
         switch (requestCode) {
             case GPS_ENABLE_REQUEST:
                 if (this.requestServiceResult == null) {
@@ -392,83 +393,83 @@ public class FlutterLocation
 
         this.requestServiceResult = requestServiceResult;
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
-                .addOnCompleteListener(activity, task -> {
-
-                    try {
-                        LocationSettingsResponse response = task.getResult(ApiException.class);
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        if(response == null) {
-                            requestServiceResult.error("SERVICE_STATUS_ERROR", "LocationSettingsResponse is null",
-                                    null);
-                            FlutterLocation.this.requestServiceResult = null;
-                            System.out.println("FlutterLocation.onCompleteListener:: LocationSettingsResponse is null!");
-
-                            return;
-                        }
-                        LocationSettingsStates states = response.getLocationSettingsStates();
-                        System.out.println("FlutterLocation.onCompleteListener:: got result: " + (states.isLocationUsable() ? "location is usable" : "location not usable"));
-
-                        requestServiceResult.success(states.isLocationUsable() ? 1 : 0);
-                        FlutterLocation.this.requestServiceResult = null;
-                        return;
-
-                    } catch (Exception e) {
-                        System.out.println("FlutterLocation.onCompleteListener:: "+e.getClass().getSimpleName()+" caught");
-                        if (e instanceof ResolvableApiException) {
-                            ResolvableApiException rae = (ResolvableApiException) e;
-                            int statusCode = rae.getStatusCode();
-                            System.out.println("FlutterLocation.onCompleteListener:: status="+LocationSettingsStatusCodes.getStatusCodeString(statusCode));
-                            switch (statusCode) {
-                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                                    try {
-                                        // Show the dialog by calling startResolutionForResult(), and check the
-                                        // result in onActivityResult().
-                                        rae.startResolutionForResult(activity, GPS_ENABLE_REQUEST);
-                                    } catch (IntentSender.SendIntentException sie) {
-                                        requestServiceResult.error("SERVICE_STATUS_ERROR", "Could not resolve location request",
-                                                null);
-                                    }
-                                    break;
-                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                                    requestServiceResult.error("SERVICE_STATUS_DISABLED",
-                                            "Failed to get location. Location services disabled", null);
-                                    break;
-                                default:
-
-                            }
-                        } else {
-                            // This should not happen according to Android documentation but it has been
-                            // observed on some phones.
-                            requestServiceResult.error("SERVICE_STATUS_ERROR", "Unexpected error type received", null);
-                        }
-                    }
-
-                    boolean successful = task.isSuccessful();
-                    boolean complete = task.isComplete();
-                    boolean canceled = task.isCanceled();
-                    boolean enabled = checkServiceEnabled();
-
-                    String e = (enabled ? "enabled" : "disabled");
-                    String s = (successful ? "successful" : "unsuccessful");
-                    String com = (complete ? "complete" : "incomplete");
-                    String can = (canceled ? "canceled" : "not canceled");
-
-
-                    System.out.println("FlutterLocation.onCompleteListener: " + e + ", " + s + ", " + com + ", " + can);
-                    requestServiceResult.success(enabled ? 1 : 0);
-                    this.requestServiceResult = null;
-                })
-                .addOnSuccessListener(activity, response -> {
-                    System.out.println("FlutterLocation.onSuccessListener");
-                    requestServiceResult.success(1);
-                    this.requestServiceResult = null;
-                })
-                .addOnCanceledListener(activity, () -> {
-                    System.out.println("FlutterLocation.onCanceledListener");
-                    requestServiceResult.success(0);
-                    this.requestServiceResult = null;
-                })
+//                .addOnCompleteListener(activity, task -> {
+//
+//                    try {
+//                        LocationSettingsResponse response = task.getResult(ApiException.class);
+//                        // All location settings are satisfied. The client can initialize location
+//                        // requests here.
+//                        if(response == null) {
+//                            requestServiceResult.error("SERVICE_STATUS_ERROR", "LocationSettingsResponse is null",
+//                                    null);
+//                            FlutterLocation.this.requestServiceResult = null;
+//                            System.out.println("FlutterLocation.onCompleteListener:: LocationSettingsResponse is null!");
+//
+//                            return;
+//                        }
+//                        LocationSettingsStates states = response.getLocationSettingsStates();
+//                        System.out.println("FlutterLocation.onCompleteListener:: got result: " + (states.isLocationUsable() ? "location is usable" : "location not usable"));
+//
+//                        requestServiceResult.success(states.isLocationUsable() ? 1 : 0);
+//                        FlutterLocation.this.requestServiceResult = null;
+//                        return;
+//
+//                    } catch (Exception e) {
+//                        System.out.println("FlutterLocation.onCompleteListener:: "+e.getClass().getSimpleName()+" caught");
+//                        if (e instanceof ResolvableApiException) {
+//                            ResolvableApiException rae = (ResolvableApiException) e;
+//                            int statusCode = rae.getStatusCode();
+//                            System.out.println("FlutterLocation.onCompleteListener:: status="+LocationSettingsStatusCodes.getStatusCodeString(statusCode));
+//                            switch (statusCode) {
+//                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+//                                    try {
+//                                        // Show the dialog by calling startResolutionForResult(), and check the
+//                                        // result in onActivityResult().
+//                                        rae.startResolutionForResult(activity, GPS_ENABLE_REQUEST);
+//                                    } catch (IntentSender.SendIntentException sie) {
+//                                        requestServiceResult.error("SERVICE_STATUS_ERROR", "Could not resolve location request",
+//                                                null);
+//                                    }
+//                                    break;
+//                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+//                                    requestServiceResult.error("SERVICE_STATUS_DISABLED",
+//                                            "Failed to get location. Location services disabled", null);
+//                                    break;
+//                                default:
+//
+//                            }
+//                        } else {
+//                            // This should not happen according to Android documentation but it has been
+//                            // observed on some phones.
+//                            requestServiceResult.error("SERVICE_STATUS_ERROR", "Unexpected error type received", null);
+//                        }
+//                    }
+//
+//                    boolean successful = task.isSuccessful();
+//                    boolean complete = task.isComplete();
+//                    boolean canceled = task.isCanceled();
+//                    boolean enabled = checkServiceEnabled();
+//
+//                    String e = (enabled ? "enabled" : "disabled");
+//                    String s = (successful ? "successful" : "unsuccessful");
+//                    String com = (complete ? "complete" : "incomplete");
+//                    String can = (canceled ? "canceled" : "not canceled");
+//
+//
+//                    System.out.println("FlutterLocation.onCompleteListener: " + e + ", " + s + ", " + com + ", " + can);
+//                    requestServiceResult.success(enabled ? 1 : 0);
+//                    this.requestServiceResult = null;
+//                })
+//                .addOnSuccessListener(activity, response -> {
+//                    System.out.println("FlutterLocation.onSuccessListener");
+//                    requestServiceResult.success(1);
+//                    this.requestServiceResult = null;
+//                })
+//                .addOnCanceledListener(activity, () -> {
+//                    System.out.println("FlutterLocation.onCanceledListener");
+//                    requestServiceResult.success(0);
+//                    this.requestServiceResult = null;
+//                })
                 .addOnFailureListener(activity,
                 e -> {
                     System.out.println("onFailureListener");

@@ -418,6 +418,7 @@ public class FlutterLocation
                         if (e instanceof ResolvableApiException) {
                             ResolvableApiException rae = (ResolvableApiException) e;
                             int statusCode = rae.getStatusCode();
+                            System.out.println("FlutterLocation.onCompleteListener:: status="+LocationSettingsStatusCodes.getStatusCodeString(statusCode));
                             switch (statusCode) {
                                 case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                                     try {
@@ -433,6 +434,8 @@ public class FlutterLocation
                                     requestServiceResult.error("SERVICE_STATUS_DISABLED",
                                             "Failed to get location. Location services disabled", null);
                                     break;
+                                default:
+
                             }
                         } else {
                             // This should not happen according to Android documentation but it has been

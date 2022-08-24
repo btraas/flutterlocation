@@ -402,17 +402,19 @@ public class FlutterLocation
                             requestServiceResult.error("SERVICE_STATUS_ERROR", "LocationSettingsResponse is null",
                                     null);
                             FlutterLocation.this.requestServiceResult = null;
+                            System.out.println("FlutterLocation.onCompleteListener:: LocationSettingsResponse is null!");
+
                             return;
                         }
                         LocationSettingsStates states = response.getLocationSettingsStates();
-                        System.out.println("onCompleteListener:: got result: " + (states.isLocationUsable() ? "location is usable" : "location not usable"));
+                        System.out.println("FlutterLocation.onCompleteListener:: got result: " + (states.isLocationUsable() ? "location is usable" : "location not usable"));
 
                         requestServiceResult.success(states.isLocationUsable() ? 1 : 0);
                         FlutterLocation.this.requestServiceResult = null;
                         return;
 
                     } catch (Exception e) {
-                        System.out.println("onCompleteListener:: "+e.getClass().getSimpleName()+" caught");
+                        System.out.println("FlutterLocation.onCompleteListener:: "+e.getClass().getSimpleName()+" caught");
                         if (e instanceof ResolvableApiException) {
                             ResolvableApiException rae = (ResolvableApiException) e;
                             int statusCode = rae.getStatusCode();

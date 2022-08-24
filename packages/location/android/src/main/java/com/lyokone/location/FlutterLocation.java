@@ -30,6 +30,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnCanceledListener;
@@ -393,6 +394,51 @@ public class FlutterLocation
         mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
                 .addOnCompleteListener(activity, task -> {
 
+                    try {
+                        LocationSettingsResponse response = task.getResult(ApiException.class);
+                        // All location settings are satisfied. The client can initialize location
+                        // requests here.
+                        if(response == null) {
+                            requestServiceResult.error("SERVICE_STATUS_ERROR", "LocationSettingsResponse is null",
+                                    null);
+                            FlutterLocation.this.requestServiceResult = null;
+                            return;
+                        }
+                        LocationSettingsStates states = response.getLocationSettingsStates();
+                        System.out.println("onCompleteListener:: got result: " + (states.isLocationUsable() ? "location is usable" : "location not usable"));
+
+                        requestServiceResult.success(states.isLocationUsable() ? 1 : 0);
+                        FlutterLocation.this.requestServiceResult = null;
+                        return;
+
+                    } catch (Exception e) {
+                        System.out.println("onCompleteListener:: "+e.getClass().getSimpleName()+" caught");
+                        if (e instanceof ResolvableApiException) {
+                            ResolvableApiException rae = (ResolvableApiException) e;
+                            int statusCode = rae.getStatusCode();
+                            switch (statusCode) {
+                                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                    try {
+                                        // Show the dialog by calling startResolutionForResult(), and check the
+                                        // result in onActivityResult().
+                                        rae.startResolutionForResult(activity, GPS_ENABLE_REQUEST);
+                                    } catch (IntentSender.SendIntentException sie) {
+                                        requestServiceResult.error("SERVICE_STATUS_ERROR", "Could not resolve location request",
+                                                null);
+                                    }
+                                    break;
+                                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                    requestServiceResult.error("SERVICE_STATUS_DISABLED",
+                                            "Failed to get location. Location services disabled", null);
+                                    break;
+                            }
+                        } else {
+                            // This should not happen according to Android documentation but it has been
+                            // observed on some phones.
+                            requestServiceResult.error("SERVICE_STATUS_ERROR", "Unexpected error type received", null);
+                        }
+                    }
+
                     boolean successful = task.isSuccessful();
                     boolean complete = task.isComplete();
                     boolean canceled = task.isCanceled();
@@ -445,6 +491,7 @@ public class FlutterLocation
                         // observed on some phones.
                         requestServiceResult.error("SERVICE_STATUS_ERROR", "Unexpected error type received", null);
                     }
+                    this.requestServiceResult = null;
                 });
     }
 
